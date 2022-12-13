@@ -1,0 +1,15 @@
+.cardsWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 20px;
+}
+
+.resultWrapper {
+  margin: 110px 0 20px 32px;
+  text-align: left;
+}
+.resultCount {
+  background-color: aqua;
+  border-radius: 8px;
+  padding: 10px;
+}

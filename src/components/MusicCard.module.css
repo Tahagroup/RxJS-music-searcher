@@ -1,0 +1,28 @@
+.flexWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: 10px;
+  border-radius: 5px;
+  background-color: aliceblue;
+  padding: 10px;
+  margin: 10px;
+}
+.flexWrapper:hover {
+  background-color: wheat;
+}
+
+.main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  gap: 10px;
+  text-align: right;
+}
+.secondary {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 20px;
+}

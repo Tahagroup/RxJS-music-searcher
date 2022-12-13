@@ -1,0 +1,90 @@
+.container {
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  height: 90px;
+  background-color: antiquewhite;
+  transition: all 1s ease-out;
+  animation: pageFadeIn 2s forwards;
+}
+
+.container:has(input:valid) {
+  background-color: wheat;
+}
+
+.appTitle {
+  position: absolute;
+  top: 25px;
+  left: 40px;
+  font-size: 22px;
+  font-weight: bold;
+  color: blue;
+}
+.searchInput {
+  border-radius: 5px;
+  font-size: 20px;
+  padding: 5px;
+  height: 6vh;
+  position: absolute;
+  top: 45vh;
+  left: 39.7%;
+  width: 100px;
+  font-family: "SF Pro Display";
+  border: 1px #bbb solid;
+  font-weight: bold;
+  color: burlywood;
+  background-image: url("../../public/search.png");
+  background-position: 10px 15px;
+  background-repeat: no-repeat;
+  padding-left: 40px;
+}
+.searchInput::placeholder {
+  font-family: "SF Pro Display";
+}
+
+.searchInput:valid {
+  animation: validInput 1.2s forwards ease-out;
+}
+.searchInput:invalid {
+  animation: invalidInput 2s forwards;
+}
+
+@keyframes validInput {
+  0% {
+    top: 45vh;
+    width: 200px;
+  }
+  50% {
+    top: 2vh;
+    width: 200px;
+  }
+  100% {
+    top: 2vh;
+    width: 300px;
+  }
+}
+@keyframes invalidInput {
+  0% {
+    top: 2vh;
+    width: 300px;
+  }
+  50% {
+    top: 2vh;
+    width: 200px;
+  }
+  100% {
+    top: 45vh;
+    width: 200px;
+  }
+}
+@keyframes pageFadeIn {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
