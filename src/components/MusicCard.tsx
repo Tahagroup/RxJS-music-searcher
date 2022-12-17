@@ -12,8 +12,8 @@ function MusicCard({ music }: propTypes) {
   return (
     <div className={styles.flexWrapper}>
       <div className={styles.main}>
+        <strong className={styles.musictitle}>{music.title}</strong>
         <div>💯score: {music.score}</div>
-        <strong>{music.title}</strong>
       </div>
       <div className={styles.secondary}>
         <div>🎸artist: {music["artist-credit"][0].name}</div>

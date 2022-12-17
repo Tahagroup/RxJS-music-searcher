@@ -15,8 +15,14 @@ interface propsType {
   setFetchedData: (response: responseType | undefined) => void;
   fetchedData: responseType | undefined;
   setError: (response: ErrorType | undefined) => void;
+  setIsLoading: (isLoading: boolean) => void;
 }
-function QueryInput({ setFetchedData, fetchedData, setError }: propsType) {
+function QueryInput({
+  setFetchedData,
+  fetchedData,
+  setError,
+  setIsLoading,
+}: propsType) {
   const offset = useRef<number>(0);
   const searchText = useRef<string>("");
 
@@ -30,9 +36,15 @@ function QueryInput({ setFetchedData, fetchedData, setError }: propsType) {
         );
       }),
       filter((_) => {
-        return fetchedData!.count !== fetchedData!.recordings.length;
+        const thereIsMoreData =
+          fetchedData!.count !== fetchedData!.recordings.length;
+        if (!thereIsMoreData) {
+          setIsLoading(false);
+        }
+        return thereIsMoreData;
       }),
       tap((val) => {
+        setIsLoading(true);
         offset.current = offset.current + 25;
       }),
       switchMap((value) => {
@@ -58,25 +70,22 @@ function QueryInput({ setFetchedData, fetchedData, setError }: propsType) {
         // return of({ error: true, message: err.message });
       })
     );
-    // scrollPipe.subscribe({
-    //   next: (data) =>
-    //     console.log({
-    //       ...fetchedData!,
-    //       recordings: [...fetchedData!.recordings, ...data.recordings],
-    //     }),
-    // });
     const scrollSubscription = scrollPipe.subscribe({
       next: (data) => {
         if (fetchedData === undefined) {
           return;
         }
+        setIsLoading(false);
         setFetchedData({
           ...fetchedData!,
           recordings: [...fetchedData!.recordings, ...data.recordings],
         });
       },
-      error: (error) => setError(error),
-      //  complete: () => setisLoading(false),
+      error: (error) => {
+        setIsLoading(false);
+        setError(error);
+      },
+      complete: () => setIsLoading(false),
     });
     //////////////////////////////////////////////////////////////////////////////////////////////////
     // create observables using fromEvent
@@ -103,6 +112,7 @@ function QueryInput({ setFetchedData, fetchedData, setError }: propsType) {
         );
       }),
       switchMap((response) => {
+        // setIsLoading(false);
         if (response.ok) {
           // OK return data
           return response.json();
@@ -120,22 +130,25 @@ function QueryInput({ setFetchedData, fetchedData, setError }: propsType) {
     );
     const inputSubscription = changes.subscribe({
       next: (data) => setFetchedData(data),
-      error: (error) => setError(error),
-      //  complete: () => setisLoading(false),
+      error: (error) => {
+        setIsLoading(false);
+        setError(error);
+      },
+      complete: () => setIsLoading(false),
     });
 
     return () => {
       inputSubscription.unsubscribe();
       scrollSubscription.unsubscribe();
     };
-  }, [fetchedData, setError, setFetchedData]);
+  }, [fetchedData, setError, setFetchedData, setIsLoading]);
 
   return (
     <div className={styles.container}>
       <div className={styles.appTitle}>RXJs Music Searcher</div>
       <input
         type="text"
-        placeholder="Enter part of title"
+        placeholder="Enter part of title/artist name"
         id="searchInput"
         className={styles.searchInput}
         required

@@ -14,11 +14,11 @@
 
 .appTitle {
   position: absolute;
-  top: 25px;
+  top: 27px;
   left: 40px;
   font-size: 22px;
   font-weight: bold;
-  color: blue;
+  color: #333;
 }
 .searchInput {
   border-radius: 5px;
@@ -52,29 +52,29 @@
 @keyframes validInput {
   0% {
     top: 45vh;
-    width: 200px;
+    width: 270px;
   }
   50% {
     top: 2vh;
-    width: 200px;
+    width: 270px;
   }
   100% {
     top: 2vh;
-    width: 300px;
+    width: 320px;
   }
 }
 @keyframes invalidInput {
   0% {
     top: 2vh;
-    width: 300px;
+    width: 320px;
   }
   50% {
     top: 2vh;
-    width: 200px;
+    width: 270px;
   }
   100% {
     top: 45vh;
-    width: 200px;
+    width: 270px;
   }
 }
 @keyframes pageFadeIn {

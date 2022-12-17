@@ -15,10 +15,15 @@
 .main {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
 
   gap: 10px;
   text-align: right;
+}
+.musictitle {
+  background-color: rgb(251, 243, 232);
+  border-radius: 5px;
+  padding: 5px;
 }
 .secondary {
   display: flex;
