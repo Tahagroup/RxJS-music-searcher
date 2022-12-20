@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
+  flex-grow: 1;
   gap: 10px;
   border-radius: 5px;
   background-color: aliceblue;
@@ -16,7 +17,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   gap: 10px;
   text-align: right;
 }
@@ -30,4 +30,6 @@
   justify-content: center;
   align-items: flex-end;
   gap: 20px;
+}
+@media (max-width: 768px) {
 }

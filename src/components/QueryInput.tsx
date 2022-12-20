@@ -26,34 +26,10 @@ function QueryInput({
   const offset = useRef<number>(0);
   const searchText = useRef<string>("");
 
-  useEffect(() => {
-    const scrollChanges$ = fromEvent(window, "scroll");
-    const scrollPipe = scrollChanges$.pipe(
-      filter((_) => {
-        return (
-          window.innerHeight + document.documentElement.scrollTop + 0.2 >=
-          document.documentElement.offsetHeight
-        );
-      }),
-      filter((_) => {
-        const thereIsMoreData =
-          fetchedData!.count !== fetchedData!.recordings.length;
-        if (!thereIsMoreData) {
-          setIsLoading(false);
-        }
-        return thereIsMoreData;
-      }),
-      tap((val) => {
-        setIsLoading(true);
-        offset.current = offset.current + 25;
-      }),
-      switchMap((value) => {
-        return fromFetch(
-          `https://musicbrainz.org/ws/2/recording?query=${searchText.current!}&offset=${
-            offset.current
-          }&fmt=json`
-        );
-      }),
+  function doFetch(query: string, offset: number) {
+    return fromFetch(
+      `https://musicbrainz.org/ws/2/recording?query=${searchText.current!}&offset=${offset}&fmt=json`
+    ).pipe(
       switchMap((response) => {
         if (response.ok) {
           // OK return data
@@ -70,11 +46,35 @@ function QueryInput({
         // return of({ error: true, message: err.message });
       })
     );
+  }
+  useEffect(() => {
+    // create observables using fromEvent - should be placed inside useEffect so HTML elements exist
+    const scrollChanges$ = fromEvent(window, "scroll");
+    const inputChanges$ = fromEvent(
+      document.querySelector("#searchInput")!,
+      "input"
+    );
+    const scrollPipe = scrollChanges$.pipe(
+      filter((_) => {
+        const thereIsMoreData =
+          fetchedData!.count !== fetchedData!.recordings.length;
+        if (!thereIsMoreData) {
+          setIsLoading(false);
+        }
+        // we want only scrolls to the end of screen and if there is more data to be fetched on scroll
+        return (
+          window.innerHeight + document.documentElement.scrollTop + 0.2 >=
+            document.documentElement.offsetHeight && thereIsMoreData
+        );
+      }),
+      switchMap((value) => {
+        setIsLoading(true);
+        offset.current = offset.current + 25;
+        return doFetch(searchText.current, offset.current);
+      })
+    );
     const scrollSubscription = scrollPipe.subscribe({
       next: (data) => {
-        if (fetchedData === undefined) {
-          return;
-        }
         setIsLoading(false);
         setFetchedData({
           ...fetchedData!,
@@ -85,62 +85,44 @@ function QueryInput({
         setIsLoading(false);
         setError(error);
       },
-      complete: () => setIsLoading(false),
     });
     //////////////////////////////////////////////////////////////////////////////////////////////////
-    // create observables using fromEvent
-    const inputChanges$ = fromEvent(
-      document.querySelector("#searchInput")!,
-      "input"
-    );
+
     const changes = inputChanges$.pipe(
       debounceTime(1000),
       tap((event) => {
         searchText.current = (event.target as HTMLInputElement).value;
         if (searchText.current === "") {
           setFetchedData(undefined);
+          setIsLoading(false);
         }
         setError(undefined);
       }),
-      filter((event) => (event.target as HTMLInputElement).value !== ""),
+      filter((event) => (event.target as HTMLInputElement).value.trim() !== ""),
       // switchMap cancels the previous request if a new one comes in
-      // should be merged from here
       switchMap((debouncedValue) => {
+        setIsLoading(true);
         const param = (debouncedValue.target! as HTMLInputElement).value;
-        return fromFetch(
-          `https://musicbrainz.org/ws/2/recording?query=${param}&offset=${"0"}&fmt=json`
-        );
-      }),
-      switchMap((response) => {
-        // setIsLoading(false);
-        if (response.ok) {
-          // OK return data
-          return response.json();
-        } else {
-          // Server is returning a status requiring the client to try something else.
-          return of({ error: true, message: `Error ${response.status}` });
-        }
-      }),
-      catchError((err) => {
-        // Network or other error, handle appropriately
-        console.error(err);
-        throw new Error(err.message);
-        // return of({ error: true, message: err.message });
+        return doFetch(param, 0);
       })
     );
     const inputSubscription = changes.subscribe({
-      next: (data) => setFetchedData(data),
+      next: (data) => {
+        setFetchedData(data);
+        setIsLoading(false);
+      },
       error: (error) => {
         setIsLoading(false);
         setError(error);
       },
-      complete: () => setIsLoading(false),
     });
 
     return () => {
       inputSubscription.unsubscribe();
       scrollSubscription.unsubscribe();
     };
+    // setError, setFetchedData, setIsLoading are state changing
+    // functions and never change
   }, [fetchedData, setError, setFetchedData, setIsLoading]);
 
   return (

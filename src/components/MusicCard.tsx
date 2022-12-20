@@ -5,10 +5,6 @@ interface propTypes {
   music: any;
 }
 function MusicCard({ music }: propTypes) {
-  if (music.releases === undefined) {
-    console.log(music.releases + JSON.stringify(music));
-  }
-
   return (
     <div className={styles.flexWrapper}>
       <div className={styles.main}>
@@ -20,7 +16,12 @@ function MusicCard({ music }: propTypes) {
         {music.releases && (
           <>
             <div>📅{music.releases[0].date}</div>
-            <div>🌍country: {music.releases[0].country}</div>
+            <div>
+              🌍country:{" "}
+              {music.releases[0].country === undefined
+                ? "-"
+                : music.releases[0].country}
+            </div>
           </>
         )}
       </div>

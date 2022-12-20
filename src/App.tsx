@@ -9,7 +9,7 @@ function App() {
   const [error, setError] = useState<ErrorType | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const hasData = fetchedData && "recordings" in fetchedData!;
+  // const hasData = fetchedData && "recordings" in fetchedData!;
 
   return (
     <div className="App">
@@ -19,7 +19,7 @@ function App() {
         setError={setError}
         setIsLoading={setIsLoading}
       />
-      {hasData ? (
+      {fetchedData ? (
         <>
           <Results fetchedData={fetchedData} />
           {error && (
