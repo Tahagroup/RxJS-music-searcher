@@ -7,6 +7,7 @@ interface propsType {
 function Results(props: propsType) {
   const numberFormatter = Intl.NumberFormat("en-US");
   const formatted = numberFormatter.format(props.fetchedData.count);
+
   return (
     <>
       <div className={styles.resultWrapper}>

@@ -7,9 +7,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: antiquewhite;
-  /* background: url("../public/bg.webp");
-  background-size: cover;
-  background-repeat: no-repeat; */
 }
 
 code {

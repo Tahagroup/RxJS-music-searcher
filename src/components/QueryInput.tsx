@@ -26,6 +26,23 @@ function QueryInput({
   const offset = useRef<number>(0);
   const searchText = useRef<string>("");
 
+  function handleEnterPress(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Enter") {
+      setFetchedData(undefined);
+      setError(undefined);
+      doFetch(searchText.current, 0).subscribe({
+        next: (data) => {
+          setFetchedData(data);
+          setIsLoading(false);
+          setError(undefined);
+        },
+        error: (error) => {
+          setIsLoading(false);
+          setError(error);
+        },
+      });
+    }
+  }
   function doFetch(query: string, offset: number) {
     return fromFetch(
       `https://musicbrainz.org/ws/2/recording?query=${searchText.current!}&offset=${offset}&fmt=json`
@@ -135,6 +152,7 @@ function QueryInput({
         className={styles.searchInput}
         required
         spellCheck="false"
+        onKeyDown={handleEnterPress}
       />
     </div>
   );
